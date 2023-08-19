@@ -1,9 +1,0 @@
-JWT 
- Token based Authencation System
- ketika login, ngirim password -> server cek benar apa enggak -> server kirim token enkriitip ke sistem client
- 
-nb: token bisa dideskriptit tapi hanya keliatan username
-
-
-Spring security
- dukung based login, dan kerberos
