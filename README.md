@@ -1,2 +1,1 @@
-# pesan-yuk-application
-1. This Simple Ordering Application with JWT, Redis and Rabbit MQ
+# pesan-yuk-application - Simple Ordering Application implementing JWT, Redis and Rabbit MQ
