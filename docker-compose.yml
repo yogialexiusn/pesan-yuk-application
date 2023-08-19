@@ -1,0 +1,73 @@
+version:  "3.7"
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - "1234:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=cacad123
+      - POSTGRES_DB=postgres
+    networks:
+      - java_network
+
+  redis:
+    container_name: redis
+    image: redis:6.2.13-alpine3.18
+    command: redis-server /usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./resources/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - java_network
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.9.29-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - java_network
+
+  java-jwt:
+    container_name: java-jwt
+    image: java-docker:1.0
+    ports :
+    - "8080:8080"
+    expose :
+      - "8080"
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    links:
+      - "postgres:postgres"
+    environment:
+      - NAME=Docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/postgres
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=cacad123
+      - DDL_AUTO=update
+      - SPRING_DATASOURCE_PORT=5432
+      - REDIS_PORT=6379
+      - REDIS_HOST=redis
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - java_network
+
+volumes:
+  postgres_data:
+    external: false
+
+networks:
+  java_network :
+      name : java_network
+      driver : bridge

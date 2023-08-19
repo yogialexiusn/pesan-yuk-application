@@ -4,6 +4,9 @@ import com.example.demo.Config.JwtTokenProvider;
 import com.example.demo.Models.*;
 import com.example.demo.Repositories.RoleRepository;
 import com.example.demo.Repositories.UserRepository;
+import org.json.simple.JSONValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,8 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthRestApis {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthRestApis.class);
 
     @Autowired
     AuthenticationManager authenticationManager;
@@ -46,8 +51,11 @@ public class AuthRestApis {
                         loginRequest.getPassword()
                 )
         );
+        logger.info("cek {}, ",JSONValue.toJSONString(authentication));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtTokenProvider.generateToken(authentication);
+        logger.info("cek1 {}, ",JSONValue.toJSONString(jwt));
         return ResponseEntity.ok(new JWTResponse(jwt));
     }
 
@@ -66,6 +74,7 @@ public class AuthRestApis {
                 signupRequest.getUsername(),
                 signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword()));
+        logger.info("cek {}, " ,JSONValue.toJSONString(user));
 
         Set strRoles = signupRequest.getRole();
 
